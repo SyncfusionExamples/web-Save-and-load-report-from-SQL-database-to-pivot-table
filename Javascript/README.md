@@ -1,32 +1,18 @@
-# How to bind MSSQL database to pivot table
+# How to bind MSSQL database to pivot table Save & Load Actions
 
-## Introduction
+A quick start project that shows how to save and load reports from a SQL Server database and load them into the Syncfusion Pivot Table at run time. This repository includes a ASP.NET Core Web App Controller ([MyWebService](../MyWebService/)) for saving and loading reports from a SQL server database, as well as a quick start samples in the JavaScript platform that displays the loaded report in a Syncfusion Pivot Table.
 
-This repository contains client-side Javascript sample for syncfusion pivot table save & load.
+## Project prerequisites
 
-## Prerequesties software
+Before beginning work on the server and client projects, ensure the following software to be installed in the machine.
 
-Make sure that you have the following requirements in your machine before starting to work on the client projects.
+* [git](https://git-scm.com/downloads)
+* [Node.js](https://nodejs.org/en/)
+* [Visual Studio Code](https://code.visualstudio.com/)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/ ) and [.NET Core SDK 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or later installed on your machine
 
-* git
-* Visual Studio Code (Optional)
-* Visual Studio 2022 (Optional)
+## How to run this application?
 
-## Guide to download
+* To run this application, clone the [Save-and-load-report-from-SQL-database-to-pivot-table](https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table) repository and then open **MyWebService** in Visual Studio 2022. Simply build and run your project in IIS Express, and it will host and display the URL 'https://localhost:44313'.
 
-* To run this application, you need to clone the `Save-and-load-report-from-SQL-database-to-pivot-table` repository and then navigate to the path where it has been stored in your system.
-
-* To do so, open the command prompt and run the below command.
-
-```
-git clone https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table
-
-```
-
-## Guide to Run sample
-
-Once done with downloading, follows the steps one after the other.
-
-* Run **MyWebService** (Server-side) Core Api application in Visual Studio to get the API link.
- 
-* Now open the Javascript pivot-table sample and Open the `index.html` file in browser page.
+*  Now open JavaScript sample in Visual Studio Code. Initialize the Pivot Table, map the hosted URL,create a pivot report, and finally, open the **index.html** file in your browser to run your project.

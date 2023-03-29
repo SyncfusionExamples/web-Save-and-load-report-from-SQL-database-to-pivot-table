@@ -44,8 +44,7 @@ export default class App extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName, report: JSON.stringify(report) })
-        }).then(res => res.json())
-            .then(response => {
+        }).then(response => {
                 this.fetchReport();
             });
     }
@@ -59,7 +58,7 @@ export default class App extends Component {
             body: ""
         }).then(res => res.json())
             .then(response => {
-                this.updateReport(response.ReportNameList !== "" ? response.ReportNameList.split("__") : []);
+                this.updateReport(response.length > 0 ? response : []);
             });
     }
     loadReport(args) {
@@ -72,8 +71,8 @@ export default class App extends Component {
             body: JSON.stringify({ reportName: args.reportName })
         }).then(res => res.json())
             .then(response => {
-                if (response.Report) {
-                    var report = JSON.parse(response.Report);
+                if (response) {
+                    var report = JSON.parse(response);
                     report.dataSourceSettings.dataSource = this.pivotObj.dataSourceSettings.dataSource;
                     this.pivotObj.dataSourceSettings = report.dataSourceSettings;
                 }
@@ -87,8 +86,7 @@ export default class App extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName })
-        }).then(res => res.json())
-            .then(response => {
+        }).then(response => {
                 this.fetchReport();
             });
     }
@@ -100,8 +98,7 @@ export default class App extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename })
-        }).then(res => res.json())
-            .then(response => {
+        }).then(response => {
                 this.fetchReport();
             });
     }

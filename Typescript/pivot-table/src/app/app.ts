@@ -23,8 +23,7 @@ let pivotTableObj: PivotView = new PivotView({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ reportName: args.reportName, report: JSON.stringify(report) })
-    }).then(res => res.json())
-      .then(response => {
+    }).then(response => {
         pivotTableObj.fetchReport();
       });
   },
@@ -38,7 +37,7 @@ let pivotTableObj: PivotView = new PivotView({
       body: ""
     }).then(res => res.json())
       .then(response => {
-        updateReport(response.ReportNameList !== "" ? response.ReportNameList.split("__") : []);
+        updateReport(response.length > 0 ? response : []);
       });
   },
   loadReport: function (args: LoadReportArgs): void {
@@ -51,8 +50,8 @@ let pivotTableObj: PivotView = new PivotView({
       body: JSON.stringify({ reportName: args.reportName })
     }).then(res => res.json())
       .then(response => {
-        if (response.Report) {
-          var report = JSON.parse(response.Report);
+        if (response) {
+          var report = JSON.parse(response);
           report.dataSourceSettings.dataSource = pivotTableObj.dataSourceSettings.dataSource;
           pivotTableObj.dataSourceSettings = report.dataSourceSettings;
         }
@@ -66,8 +65,7 @@ let pivotTableObj: PivotView = new PivotView({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ reportName: args.reportName })
-    }).then(res => res.json())
-      .then(response => {
+    }).then(response => {
         pivotTableObj.fetchReport();
       });
   },
@@ -79,8 +77,7 @@ let pivotTableObj: PivotView = new PivotView({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename })
-    }).then(res => res.json())
-      .then(response => {
+    }).then(response => {
         pivotTableObj.fetchReport();
       });
   },

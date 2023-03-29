@@ -28,9 +28,6 @@ var pivotTableObj = new ej.pivotview.PivotView({
         report: JSON.stringify(report),
       }),
     })
-      .then(function (res) {
-        return res.json();
-      })
       .then(function (response) {
         pivotTableObj.fetchReport();
       });
@@ -49,9 +46,7 @@ var pivotTableObj = new ej.pivotview.PivotView({
           })
           .then(function (response) {
             updateReport(
-              response.ReportNameList !== ""
-                ? response.ReportNameList.split("__")
-                : []
+              response.length > 0 ? response : []
             );
           });
   },
@@ -68,8 +63,8 @@ var pivotTableObj = new ej.pivotview.PivotView({
         return res.json();
       })
       .then(function (response) {
-        if (response.Report) {
-          var report = JSON.parse(response.Report);
+        if (response) {
+          var report = JSON.parse(response);
           report.dataSourceSettings.dataSource =
             pivotTableObj.dataSourceSettings.dataSource;
           pivotTableObj.dataSourceSettings = report.dataSourceSettings;
@@ -85,9 +80,6 @@ var pivotTableObj = new ej.pivotview.PivotView({
       },
       body: JSON.stringify({ reportName: args.reportName }),
     })
-      .then(function (res) {
-        return res.json();
-      })
       .then(function (response) {
         pivotTableObj.fetchReport();
       });
@@ -104,9 +96,6 @@ var pivotTableObj = new ej.pivotview.PivotView({
         renameReport: args.rename,
       }),
     })
-      .then(function (res) {
-        return res.json();
-      })
       .then(function (response) {
         pivotTableObj.fetchReport();
       });

@@ -9,9 +9,9 @@ namespace PivotController.Controllers
     {
         [HttpPost]
         [Route("Pivot/SaveReport")]
-        public IActionResult SaveReport([FromBody] SaveReportDB reportDB)
+        public void SaveReport([FromBody] SaveReportDB reportDB)
         {
-            return Ok((SaveReportToDB(reportDB.ReportName, reportDB.Report)));
+            SaveReportToDB(reportDB.ReportName, reportDB.Report);
         }
 
         [HttpPost]
@@ -23,16 +23,16 @@ namespace PivotController.Controllers
 
         [HttpPost]
         [Route("Pivot/RemoveReport")]
-        public IActionResult RemoveReport([FromBody] ReportDB reportDB)
+        public void RemoveReport([FromBody] ReportDB reportDB)
         {
-            return Ok((RemoveReportFromDB(reportDB.ReportName)));
+            RemoveReportFromDB(reportDB.ReportName);
         }
 
         [HttpPost]
         [Route("Pivot/RenameReport")]
-        public IActionResult RenameReport([FromBody] RenameReportDB reportDB)
+        public void RenameReport([FromBody] RenameReportDB reportDB)
         {
-            return Ok((RenameReportInDB(reportDB.ReportName, reportDB.RenameReport)));
+            RenameReportInDB(reportDB.ReportName, reportDB.RenameReport);
         }
 
         [HttpPost]
@@ -65,120 +65,100 @@ namespace PivotController.Controllers
             public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
         }
 
-        public Dictionary<string, object> SaveReportToDB(string reportName, string report)
+        public void SaveReportToDB(string reportName, string report)
         {
-            string conSTR = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
-                + @"\App_Data\Database1.mdf;Integrated Security=True";
+            SqlConnection sqlConn = OpenConnection();
             bool isDuplicate = true;
-            SqlConnection sqlConn = new SqlConnection(conSTR);
-            sqlConn.Open();
             SqlCommand cmd1 = null;
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                if ((row.ItemArray[0] as string).Equals(reportName))
+                if ((row["ReportName"] as string).Equals(reportName))
                 {
                     isDuplicate = false;
-                    cmd1 = new SqlCommand("update ReportTable set Report=@Report where ReportName like @ReportName", sqlConn);
+                    cmd1 = new SqlCommand("UPDATE ReportTable set Report=@Report where ReportName like @ReportName", sqlConn);
                 }
             }
             if (isDuplicate)
             {
-                cmd1 = new SqlCommand("insert into ReportTable Values(@ReportName,@Report)", sqlConn);
+                cmd1 = new SqlCommand("INSERT into ReportTable (ReportName,Report) Values(@ReportName,@Report)", sqlConn);
             }
             cmd1.Parameters.AddWithValue("@ReportName", reportName);
             cmd1.Parameters.AddWithValue("@Report", report.ToString());
             cmd1.ExecuteNonQuery();
             sqlConn.Close();
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            dictionary.Add("CurrentAction", "Save");
-            return dictionary;
         }
 
-        public Dictionary<string, object> RemoveReportFromDB(string reportName)
+        public void RemoveReportFromDB(string reportName)
         {
-            string conSTR = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
-                + @"\App_Data\Database1.mdf;Integrated Security=True";
-            SqlConnection sqlConn = new SqlConnection(conSTR);
-            sqlConn.Open();
+            SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                if ((row.ItemArray[0] as string).Equals(reportName))
+                if ((row["ReportName"] as string).Equals(reportName))
                 {
                     cmd1 = new SqlCommand("DELETE FROM ReportTable WHERE ReportName LIKE '%" + reportName + "%'", sqlConn);
+                    break;
                 }
             }
             cmd1.ExecuteNonQuery();
             sqlConn.Close();
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            dictionary.Add("CurrentAction", "Remove");
-            return dictionary;
         }
 
-        public Dictionary<string, object> RenameReportInDB(string reportName, string renameReport)
+        public void RenameReportInDB(string reportName, string renameReport)
         {
-            string conSTR = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
-                + @"\App_Data\Database1.mdf;Integrated Security=True";
-            SqlConnection sqlConn = new SqlConnection(conSTR);
-            sqlConn.Open();
+            SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                if ((row.ItemArray[0] as string).Equals(reportName))
+                if ((row["ReportName"] as string).Equals(reportName))
                 {
-                    cmd1 = new SqlCommand("update ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);
+                    cmd1 = new SqlCommand("UPDATE ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);
+                    break;
                 }
             }
             cmd1.Parameters.AddWithValue("@RenameReport", renameReport);
             cmd1.ExecuteNonQuery();
             sqlConn.Close();
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            dictionary.Add("CurrentAction", "Rename");
-            return dictionary;
         }
 
-        public Dictionary<string, object> FetchReportListFromDB()
+        public List<string> FetchReportListFromDB()
         {
-            string conSTR = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
-                + @"\App_Data\Database1.mdf;Integrated Security=True";
-            SqlConnection sqlConn = new SqlConnection(conSTR);
-            sqlConn.Open();
-            string reportNames = string.Empty, currentRptName = string.Empty;
-            foreach (System.Data.DataRow row in GetDataTable(sqlConn).Rows)
+            SqlConnection sqlConn = OpenConnection();
+            List<string> reportNames = new List<string>();
+            foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                currentRptName = (row.ItemArray[0] as string);
-                reportNames = reportNames == "" ? currentRptName : reportNames + "__" + currentRptName;
+                if (!string.IsNullOrEmpty(row["ReportName"] as string))
+                {
+                    reportNames.Add(row["ReportName"].ToString());
+                }
             }
             sqlConn.Close();
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            dictionary.Add("ReportNameList", reportNames);
-            dictionary.Add("CurrentAction", "Fetch");
-            return dictionary;
+            return reportNames;
         }
 
-        public Dictionary<string, object> LoadReportFromDB(string reportName)
+        public string LoadReportFromDB(string reportName)
         {
-            string conSTR = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
-                + @"\App_Data\Database1.mdf;Integrated Security=True";
-            SqlConnection sqlConn = new SqlConnection(conSTR);
-            sqlConn.Open();
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            string currentRptName = string.Empty;
+            SqlConnection sqlConn = OpenConnection();
             string report = string.Empty;
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                currentRptName = row.ItemArray[0] as string;
-                if (currentRptName.Equals(reportName))
+                if ((row["ReportName"] as string).Equals(reportName))
                 {
-                    report = row.ItemArray[1] as string;
-                    dictionary.Add("ReportName", currentRptName);
-                    dictionary.Add("Report", report);
-                    dictionary.Add("CurrentAction", "Load");
+                    report = (string)row["Report"];
                     break;
                 }
             }
             sqlConn.Close();
-            return dictionary;
+            return report;
+        }
+
+        private SqlConnection OpenConnection()
+        {
+            string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=" + Environment.CurrentDirectory
+                + @"\App_Data\Database1.mdf;Integrated Security=True";
+            SqlConnection sqlConn = new SqlConnection(connectionString);
+            sqlConn.Open();
+            return sqlConn;
         }
 
         private DataTable GetDataTable(SqlConnection sqlConn)
