@@ -1,41 +1,27 @@
-# How to bind MSSQL database to pivot table
+# How to bind MSSQL database to pivot table Save & Load Actions
 
-## Introduction
-
-This repository contains client-side Typescript sample for syncfusion pivot table save & load.
+A quick start project for connecting a SQL server database to a Syncfusion Pivot Table Save & Load Actions. This repository includes a ASP.NET Core Web App Controller (MyWebService) for performing Save & Load Actions from a SQL server database, as well as a quick start sample in the TypeScript platform that displays the perform Save & Load Actions in a Syncfusion Pivot Table.
 
 ## Project prerequisites
 
-Make sure that you have the following requirements in your machine before starting to work on the client projects.
+Before beginning work on the server and client projects, ensure the following software to be installed in the machine.
 
+* git
 * Node.js
 * TypeScript
-* Visual Studio Code (Optional)
-* Visual Studio 2022 (Optional)
+* Visual Studio Code
+* Visual Studio 2022 and .NET Core SDK 6.0 or later installed on your machine
 
-## Guide to download
+## How to run this application?
 
-* To run this application, you need to clone the `Save-and-load-report-from-SQL-database-to-pivot-table` repository and then navigate to the path where it has been stored in your system.
+* To run this application, clone the [Save-and-load-report-from-SQL-database-to-pivot-table](https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table) repository and then open MyWebService in Visual Studio 2022. Simply build and run your project in IIS Express, and it will host and display the URL 'https://localhost:44313'.
 
-* To do so, open the command prompt and run the below command.
-
-```
-git clone https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table
-
-```
-
-## Guide to Run sample
-
-Once done with downloading, follows the steps one after the other.
-
-* Run **MyWebService** (Server-side) Core Api application in Visual Studio to get the API link.
-
-*  Now open TypeScript platform sample in Visual Studio Code and install the necessary npm packages using the following command line script.
+* Now open TypeScript sample in Visual Studio Code and and install the necessary npm packages using the following command.
 ```sh
 npm install
 ```
 
-* Now run your project using the following command line script.
+* Initialize the Pivot Table, map the hosted URL, create a pivot report, and finally run your project using the following command to achieve the desired result.
 ```sh
 npm run start
 ```

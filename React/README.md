@@ -9,6 +9,7 @@ This repository contains client-side React sample for syncfusion pivot table sav
 Make sure that you have the following requirements in your machine before starting to work on the client projects.
 
 * git
+* React
 * Node Package Manager (NPM suggests versions above **14+**)
 * Visual Studio Code (Optional)
 * Visual Studio 2022 (Optional)
