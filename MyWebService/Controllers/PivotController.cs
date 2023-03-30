@@ -44,20 +44,20 @@ namespace PivotController.Controllers
 
         public class SaveReportDB
         {
-            public String ReportName { get; set; }
-            public String Report { get; set; }
+            public string ReportName { get; set; }
+            public string Report { get; set; }
         }
 
         public class ReportDB
         {
-            public String ReportName { get; set; }
+            public string ReportName { get; set; }
         }
 
         public class RenameReportDB
         {
-            public String ReportName { get; set; }
-            public String RenameReport { get; set; }
-            public Boolean isReportExists { get; set; }
+            public string ReportName { get; set; }
+            public string RenameReport { get; set; }
+            public bool isReportExists { get; set; }
         }
 
         public class ErrorViewModel
@@ -105,17 +105,16 @@ namespace PivotController.Controllers
             sqlConn.Close();
         }
 
-        public void RenameReportInDB(string reportName, string renameReport, Boolean isReportExists)
+        public void RenameReportInDB(string reportName, string renameReport, bool isReportExists)
         {
             SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
+            if (isReportExists)
+            {
+                RemoveReportFromDB(renameReport);
+            }
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
-                if (isReportExists)
-                {
-                    RemoveReportFromDB(renameReport);
-                    isReportExists = false;
-                }
                 if ((row["ReportName"] as string).Equals(reportName))
                 {
                     cmd1 = new SqlCommand("UPDATE ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);
