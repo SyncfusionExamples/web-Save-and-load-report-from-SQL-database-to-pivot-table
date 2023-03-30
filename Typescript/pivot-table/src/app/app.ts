@@ -76,7 +76,7 @@ let pivotTableObj: PivotView = new PivotView({
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename })
+      body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename, isReportExists: args.isReportExists })
     }).then(response => {
         pivotTableObj.fetchReport();
       });

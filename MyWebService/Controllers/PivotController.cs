@@ -32,7 +32,7 @@ namespace PivotController.Controllers
         [Route("Pivot/RenameReport")]
         public void RenameReport([FromBody] RenameReportDB reportDB)
         {
-            RenameReportInDB(reportDB.ReportName, reportDB.RenameReport);
+            RenameReportInDB(reportDB.ReportName, reportDB.RenameReport, reportDB.isReportExists);
         }
 
         [HttpPost]
@@ -57,6 +57,7 @@ namespace PivotController.Controllers
         {
             public String ReportName { get; set; }
             public String RenameReport { get; set; }
+            public Boolean isReportExists { get; set; }
         }
 
         public class ErrorViewModel
@@ -104,12 +105,17 @@ namespace PivotController.Controllers
             sqlConn.Close();
         }
 
-        public void RenameReportInDB(string reportName, string renameReport)
+        public void RenameReportInDB(string reportName, string renameReport, Boolean isReportExists)
         {
             SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
+                if (isReportExists)
+                {
+                    RemoveReportFromDB(renameReport);
+                    isReportExists = false;
+                }
                 if ((row["ReportName"] as string).Equals(reportName))
                 {
                     cmd1 = new SqlCommand("UPDATE ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);

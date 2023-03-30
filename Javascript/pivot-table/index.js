@@ -94,6 +94,7 @@ var pivotTableObj = new ej.pivotview.PivotView({
       body: JSON.stringify({
         reportName: args.reportName,
         renameReport: args.rename,
+        isReportExists: args.isReportExists
       }),
     })
       .then(function (response) {
