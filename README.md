@@ -1,3 +1,3 @@
-# Save and load report from SQL database to a Pivot Table
+# How to save and load reports from a SQL Server Database to a Pivot Table
 
 A quick start project that shows how to save and load reports from a SQL Server database and load them into the Syncfusion Pivot Table at run time. This repository includes a ASP.NET Core Web App Controller ([MyWebService](./MyWebService/)) for saving and loading reports from a SQL server database, as well as a quick start samples in the [TypeScript](./Typescript/), [JavaScript](./Javascript/), [Angular](./Angular/), [React](./React/), [VUE](./VUE/), ASP.NET [Core](./Core/) and [MVC](./MVC/) platforms that displays the loaded report in a Syncfusion Pivot Table.

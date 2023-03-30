@@ -1,4 +1,4 @@
-# How to bind MSSQL database to pivot table Save & Load Actions
+# How to save and load reports from a SQL Server Database to a Pivot Table
 
 A quick start project that shows how to save and load reports from a SQL Server database and load them into the Syncfusion Pivot Table at run time. This repository includes a ASP.NET Core Web App Controller ([MyWebService](../MyWebService/)) for saving and loading reports from a SQL server database, as well as a quick start samples in the TypeScript platform that displays the loaded report in a Syncfusion Pivot Table.
 
@@ -22,7 +22,7 @@ Before beginning work on the server and client projects, ensure the following so
 npm install
 ```
 
-* Initialize the Pivot Table, map the hosted URL, create a pivot report, and finally run your project using the following command to achieve the desired result.
+* Initialize the Pivot Table, create a pivot report based on the given data source, map the hosted url to perform save and load reports with the SQL database, and finally run your project with the following command.
 
 ```sh
 npm run start

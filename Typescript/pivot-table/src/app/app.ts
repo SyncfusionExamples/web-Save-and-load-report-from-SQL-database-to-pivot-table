@@ -27,7 +27,7 @@ let pivotTableObj: PivotView = new PivotView({
         pivotTableObj.fetchReport();
       });
   },
-  fetchReport: async function (args: FetchReportArgs): Promise<void> {
+  fetchReport: function (args: FetchReportArgs): void {
     fetch('https://localhost:44313/Pivot/FetchReport', {
       method: 'POST',
       headers: {
@@ -109,7 +109,7 @@ let pivotTableObj: PivotView = new PivotView({
 pivotTableObj.appendTo('#PivotTable');
 
 function updateReport(reportList: any) {
-  // Here you can refresh the report list by feeding updated datsource fetched from your DB.
+  // Here you can refresh the report list by feeding updated reports fetched from the database.
   var reportListObj = (pivotTableObj.element.querySelector(
     "#" + pivotTableObj.element.id + "_reportlist"
   ) as any).ej2_instances;
@@ -120,7 +120,7 @@ function updateReport(reportList: any) {
     if ((pivotTableObj.toolbarModule as any).currentReport === "" && reportListObj[0].itemData === null) {
       (pivotTableObj.toolbarModule as any).currentReport = reportList[reportList.length - 1];
       reportListObj[0].value = (pivotTableObj.toolbarModule as any).currentReport;
-      pivotTableObj.loadReport({ reportName: reportList[reportList.length - 1] })
+      pivotTableObj.loadReport({ reportName: reportList[reportList.length - 1] });
     }
   }
 }

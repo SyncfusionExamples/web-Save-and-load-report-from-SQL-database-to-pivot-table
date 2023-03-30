@@ -150,22 +150,18 @@ var pivotTableObj = new ej.pivotview.PivotView({
 pivotTableObj.appendTo("#PivotView");
 
 function updateReport(reportList) {
+  // Here you can refresh the report list by feeding updated reports fetched from the database.
   var reportListObj = pivotTableObj.element.querySelector(
     "#" + pivotTableObj.element.id + "_reportlist"
   ).ej2_instances;
   if (reportListObj) {
     reportListObj[0].dataSource = reportList;
     reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
-    if (
-      pivotTableObj.toolbarModule.currentReport === "" &&
-      reportListObj[0].itemData === null
-    ) {
-      pivotTableObj.toolbarModule.currentReport =
-        reportList[reportList.length - 1];
+    // For remove report
+    if (pivotTableObj.toolbarModule.currentReport === "" && reportListObj[0].itemData === null) {
+      pivotTableObj.toolbarModule.currentReport = reportList[reportList.length - 1];
       reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
-      pivotTableObj.loadReport({
-        reportName: reportList[reportList.length - 1],
-      });
+      pivotTableObj.loadReport({ reportName: reportList[reportList.length - 1] });
     }
   }
 }
