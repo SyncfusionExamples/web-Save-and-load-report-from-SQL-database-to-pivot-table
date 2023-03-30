@@ -1,3 +1,0 @@
-src/**/*.js
-!src/system.config.js
-node_modules/
