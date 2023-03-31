@@ -27,7 +27,7 @@ export default class App extends Component {
             reportListObj[0].dataSource = reportList;
             reportListObj[0].value = this.pivotObj.toolbarModule.currentReport;
             // For remove report
-            if (this.pivotObj.toolbarModule.currentReport === "" && reportListObj[0].itemData === null) {
+            if (this.pivotObj.toolbarModule.currentReport === "" && (reportListObj[0].itemData === null || reportList.length < 2)) {
                 this.pivotObj.toolbarModule.currentReport = reportList[reportList.length - 1];
                 reportListObj[0].value = this.pivotObj.toolbarModule.currentReport;
                 this.loadReport({ reportName: reportList[reportList.length - 1] })

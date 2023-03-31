@@ -117,7 +117,7 @@ function updateReport(reportList: any) {
     reportListObj[0].dataSource = reportList;
     reportListObj[0].value = (pivotTableObj.toolbarModule as any).currentReport;
     // For remove report
-    if ((pivotTableObj.toolbarModule as any).currentReport === "" && reportListObj[0].itemData === null) {
+    if ((pivotTableObj.toolbarModule as any).currentReport === "" && (reportListObj[0].itemData === null || reportList.length < 2)) {
       (pivotTableObj.toolbarModule as any).currentReport = reportList[reportList.length - 1];
       reportListObj[0].value = (pivotTableObj.toolbarModule as any).currentReport;
       pivotTableObj.loadReport({ reportName: reportList[reportList.length - 1] });
