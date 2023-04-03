@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<ejs-pivotview id="pivotview" allowExcelExport="true" allowConditionalFormatting="true" allowPdfExport="true" showToolbar="true" allowCalculatedField="true" showFieldList="true" width="700" toolbar="@(new List<string>() {"New", "Save", "SaveAs", "Rename", "Remove", "Load",
+        "Grid", "Chart", "Export", "SubTotal", "GrandTotal", "Formatting", "FieldList" })" saveReport="saveReport" loadReport="loadReport" fetchReport="fetchReport" renameReport="renameReport" removeReport="removeReport" newReport="newReport" toolbarRender="beforeToolbarRender">
+    <e-datasourcesettings dataSource="@ViewBag.data" expandAll="false">
+        <e-formatsettings>
+            <e-field name="Amount" format="C0"></e-field>
+        </e-formatsettings>
+         <e-rows>
+            <e-field name="Country"></e-field>
+            <e-field name="Products"></e-field>
+        </e-rows>
+        <e-columns>
+            <e-field name="Year" caption="Production Year"></e-field>
+            <e-field name="Quarter"></e-field>
+        </e-columns>
+        <e-values>
+            <e-field name="Sold" caption="Units Sold"></e-field>
+            <e-field name="Amount" caption="Sold Amount"></e-field>
+        </e-values>
+        <e-filters>
+            <e-field></e-field>
+        </e-filters>
+    </e-datasourcesettings>
+    <e-displayOption view="Both"></e-displayOption>
+    <e-chartSettings value="Amount" enableExport="true" enableMultipleAxis="false">
+         <e-chartSeries type="Column"></e-chartSeries>
+    </e-chartSettings>
+</ejs-pivotview>
+
+    <script>
+        function updateReport(reportList) {
+            var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
+            // Here you can refresh the report list by feeding updated reports fetched from the database.
+            var reportListObj = pivotTableObj.element.querySelector(
+            "#" + pivotTableObj.element.id + "_reportlist").ej2_instances;
+            if (reportListObj) {
+            reportListObj[0].dataSource = reportList;
+            reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
+                // For remove report
+                if (pivotTableObj.toolbarModule.currentReport === "" && (reportListObj[0].itemData === null || reportList.length < 2)) {
+                    pivotTableObj.toolbarModule.currentReport = reportList[reportList.length - 1];
+                    reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
+                    loadReport({ reportName: reportList[reportList.length - 1] })
+                }
+            }
+        }
+        function saveReport(args) {
+            var report = JSON.parse(args.report);
+            report.dataSourceSettings.dataSource = [];
+            fetch('https://localhost:44313/Pivot/SaveReport', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reportName: args.reportName, report: JSON.stringify(report) })
+            }).then(response => {
+                fetchReport(args);
+            });
+        }
+        function fetchReport(args) {
+            fetch('https://localhost:44313/Pivot/FetchReport', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: ""
+            }).then(res => res.json())
+            .then(response => {
+                updateReport(response.length > 0 ? response : []);
+            });
+        }
+        function loadReport(args) {
+            fetch('https://localhost:44313/Pivot/LoadReport', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reportName: args.reportName })
+            }).then(res => res.json())
+            .then(response => {
+                if (response) {
+                var report = JSON.parse(response);
+                var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
+                report.dataSourceSettings.dataSource = pivotTableObj.dataSourceSettings.dataSource;
+                pivotTableObj.dataSourceSettings = report.dataSourceSettings;
+                }
+            });
+        }
+        function removeReport(args) {
+            fetch('https://localhost:44313/Pivot/RemoveReport', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reportName: args.reportName })
+            }).then(response => {
+            fetchReport(args);
+            });
+        }
+        function renameReport(args) {
+            fetch('https://localhost:44313/Pivot/RenameReport', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename, isReportExists: args.isReportExists })
+            }).then(response => {
+            fetchReport(args);
+            });
+        }
+        function newReport() {
+            var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
+            pivotTableObj.setProperties({
+                dataSourceSettings: {
+                    columns: [],
+                    rows: [],
+                    values: [],
+                    filters: []
+                }
+            }, false);
+        }
+		function beforeToolbarRender(args) {
+			args.customToolbar.splice(6, 0, {
+				type: 'Separator' 
+			});
+			args.customToolbar.splice(9, 0, {
+				type: 'Separator' 
+			});
+		}
+    </script>
