@@ -15,4 +15,4 @@ Before beginning work on the server and client projects, ensure the following so
 
 * To run this application, clone the [Save-and-load-report-from-SQL-database-to-pivot-table](https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table) repository and then open **MyWebService** in Visual Studio 2022. Simply build and run your project in IIS Express, and it will host and display the URL `https://localhost:44313`.
 
-*  Now open ASP.NET Core sample in Visual Studio. Initialize the Pivot Table, map the hosted URL, create a pivot report, and finally, build and run your project in IIS Express to achieve the desired result.
+* Now open ASP.NET Core sample in Visual Studio. Initialize the Pivot Table, create a pivot report based on the given data source, map the hosted url to perform save and load reports with the SQL database. finally, build and run your project in IIS Express to achieve the desired result.

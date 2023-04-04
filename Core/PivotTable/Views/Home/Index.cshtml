@@ -30,109 +30,109 @@
     </e-chartSettings>
 </ejs-pivotview>
 
-    <script>
-        function updateReport(reportList) {
-            var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
-            // Here you can refresh the report list by feeding updated reports fetched from the database.
-            var reportListObj = pivotTableObj.element.querySelector(
-            "#" + pivotTableObj.element.id + "_reportlist").ej2_instances;
-            if (reportListObj) {
+<script>
+    function updateReport(reportList) {
+        var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
+        // Here you can refresh the report list by feeding updated reports fetched from the database.
+        var reportListObj = pivotTableObj.element.querySelector(
+        "#" + pivotTableObj.element.id + "_reportlist").ej2_instances;
+        if (reportListObj) {
             reportListObj[0].dataSource = reportList;
             reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
-                // For remove report
-                if (pivotTableObj.toolbarModule.currentReport === "" && (reportListObj[0].itemData === null || reportList.length < 2)) {
-                    pivotTableObj.toolbarModule.currentReport = reportList[reportList.length - 1];
-                    reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
-                    loadReport({ reportName: reportList[reportList.length - 1] })
-                }
+            // For remove report
+            if (pivotTableObj.toolbarModule.currentReport === "" && (reportListObj[0].itemData === null || reportList.length < 2)) {
+                pivotTableObj.toolbarModule.currentReport = reportList[reportList.length - 1];
+                reportListObj[0].value = pivotTableObj.toolbarModule.currentReport;
+                loadReport({ reportName: reportList[reportList.length - 1] })
             }
         }
-        function saveReport(args) {
-            var report = JSON.parse(args.report);
-            report.dataSourceSettings.dataSource = [];
-            fetch('https://localhost:44313/Pivot/SaveReport', {
+    }
+    function saveReport(args) {
+        var report = JSON.parse(args.report);
+        report.dataSourceSettings.dataSource = [];
+        fetch('https://localhost:44313/Pivot/SaveReport', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName, report: JSON.stringify(report) })
-            }).then(response => {
-                fetchReport(args);
-            });
-        }
-        function fetchReport(args) {
-            fetch('https://localhost:44313/Pivot/FetchReport', {
+        }).then(response => {
+            fetchReport(args);
+        });
+    }
+    function fetchReport(args) {
+        fetch('https://localhost:44313/Pivot/FetchReport', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: ""
-            }).then(res => res.json())
-            .then(response => {
-                updateReport(response.length > 0 ? response : []);
-            });
-        }
-        function loadReport(args) {
-            fetch('https://localhost:44313/Pivot/LoadReport', {
+        }).then(res => res.json())
+        .then(response => {
+            updateReport(response.length > 0 ? response : []);
+        });
+    }
+    function loadReport(args) {
+        fetch('https://localhost:44313/Pivot/LoadReport', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName })
-            }).then(res => res.json())
-            .then(response => {
-                if (response) {
+        }).then(res => res.json())
+        .then(response => {
+            if (response) {
                 var report = JSON.parse(response);
                 var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
                 report.dataSourceSettings.dataSource = pivotTableObj.dataSourceSettings.dataSource;
                 pivotTableObj.dataSourceSettings = report.dataSourceSettings;
-                }
-            });
-        }
-        function removeReport(args) {
-            fetch('https://localhost:44313/Pivot/RemoveReport', {
+            }
+        });
+    }
+    function removeReport(args) {
+        fetch('https://localhost:44313/Pivot/RemoveReport', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName })
-            }).then(response => {
+        }).then(response => {
             fetchReport(args);
-            });
-        }
-        function renameReport(args) {
-            fetch('https://localhost:44313/Pivot/RenameReport', {
+        });
+    }
+    function renameReport(args) {
+        fetch('https://localhost:44313/Pivot/RenameReport', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ reportName: args.reportName, renameReport: args.rename, isReportExists: args.isReportExists })
-            }).then(response => {
+        }).then(response => {
             fetchReport(args);
-            });
-        }
-        function newReport() {
-            var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
-            pivotTableObj.setProperties({
-                dataSourceSettings: {
-                    columns: [],
-                    rows: [],
-                    values: [],
-                    filters: []
-                }
-            }, false);
-        }
-		function beforeToolbarRender(args) {
-			args.customToolbar.splice(6, 0, {
-				type: 'Separator' 
-			});
-			args.customToolbar.splice(9, 0, {
-				type: 'Separator' 
-			});
-		}
-    </script>
+        });
+    }
+    function newReport() {
+        var pivotTableObj = document.getElementById('pivotview').ej2_instances[0];
+        pivotTableObj.setProperties({
+            dataSourceSettings: {
+                columns: [],
+                rows: [],
+                values: [],
+                filters: []
+            }
+        }, false);
+    }
+    function beforeToolbarRender(args) {
+        args.customToolbar.splice(6, 0, {
+            type: 'Separator' 
+        });
+        args.customToolbar.splice(9, 0, {
+            type: 'Separator' 
+        });
+    }
+</script>
