@@ -95,9 +95,9 @@ namespace MyWebService.Controllers
             {
                 foreach (DataRow row in GetDataTable(sqlConn).Rows)
                 {
-                    if ((row["ReportName"] as string).Equals(reportName))
+                    if ((row["ReportName"] as string).Equals(renameReport))
                     {
-                        cmd1 = new SqlCommand("delete from ReportTable where ReportName like '%" + reportName + "%'", sqlConn);
+                        cmd1 = new SqlCommand("delete from ReportTable where ReportName like '%" + renameReport + "%'", sqlConn);
                         break;
                     }
                 }
