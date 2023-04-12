@@ -1,0 +1,133 @@
+﻿@page "/"
+
+@using System.Data
+@using MyBlazorServerApp.Data;
+@using System.Net.Http;
+@using System.Text.Json;
+@using System.Threading.Tasks;
+
+<SfPivotView @ref=PivotRef TValue="ProductDetails" ID="pivot-table" Height="450" Width="650" ShowToolbar="true" ShowFieldList=true AllowExcelExport=true AllowPdfExport=true Toolbar="@PivotToolbar">
+    <PivotViewDisplayOption View="View.Both"></PivotViewDisplayOption>
+    <PivotViewDataSourceSettings DataSource="@DataSource" EnableSorting="true">
+        <PivotViewColumns>
+            <PivotViewColumn Name="Year"></PivotViewColumn>
+            <PivotViewColumn Name="Quarter"></PivotViewColumn>
+        </PivotViewColumns>
+        <PivotViewRows>
+            <PivotViewRow Name="Country"></PivotViewRow>
+            <PivotViewRow Name="Products"></PivotViewRow>
+        </PivotViewRows>
+        <PivotViewValues>
+            <PivotViewValue Name="Sold" Caption="Units Sold"></PivotViewValue>
+            <PivotViewValue Name="Amount" Caption="Sold Amount"></PivotViewValue>
+        </PivotViewValues>
+        <PivotViewFormatSettings>
+            <PivotViewFormatSetting Name="Amount" Format="C"></PivotViewFormatSetting>
+            <PivotViewFormatSetting Name="Sold" Format="N0"></PivotViewFormatSetting>
+        </PivotViewFormatSettings>
+    </PivotViewDataSourceSettings>
+    <PivotViewEvents TValue="ProductDetails" SaveReport="SaveReport" LoadReport="LoadReport" RenameReport="RenameReport" RemoveReport="RemoveReport" FetchReport="FetchReport"></PivotViewEvents>
+</SfPivotView>
+
+@code {
+    SfPivotView<ProductDetails> PivotRef { get; set; }
+
+    public List<ProductDetails> DataSource { get; set; }
+    public List<ToolbarItems> PivotToolbar = new List<ToolbarItems> {
+        ToolbarItems.New,
+        ToolbarItems.Save,
+        ToolbarItems.SaveAs,
+        ToolbarItems.Rename,
+        ToolbarItems.Remove,
+        ToolbarItems.Load,
+        ToolbarItems.Grid,
+        ToolbarItems.Chart,
+        ToolbarItems.Export,
+        ToolbarItems.SubTotal,
+        ToolbarItems.GrandTotal,
+        ToolbarItems.FieldList
+    };
+    protected override void OnInitialized()
+    {
+        this.DataSource = ProductDetails.GetProductData().ToList();
+    }
+    // To save a report
+    public async Task SaveReport(SaveReportArgs args)
+    {
+        string url = "https://localhost:44313/Pivot/SaveReport";
+        var data = new { ReportName = args.ReportName, Report = args.Report };
+        HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
+
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(url, content);
+        }
+    }
+    // To fetch a report
+    public async Task FetchReport(FetchReportArgs args)
+    {
+        string url = "https://localhost:44313/Pivot/FetchReport";
+        var data = new { ReportName = args.ReportName };
+        HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
+        List<string> reportNames = new List<string>();
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseJson = await response.Content.ReadAsStringAsync();
+                reportNames = JsonSerializer.Deserialize<List<string>>(responseJson);
+            }
+        }
+        args.ReportName = reportNames.ToArray();
+    }
+    // To load a report
+    public async Task LoadReport(LoadReportArgs args)
+    {
+        string url = "https://localhost:44313/Pivot/LoadReport";
+        var data = new { ReportName = args.ReportName };
+        HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
+        string responseText = string.Empty;
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                responseText = responseJson.ToString();
+            }
+        }
+        await this.PivotRef.LoadPersistDataAsync(responseText);
+    }
+    // To delete a report
+    public async Task RemoveReport(RemoveReportArgs args)
+    {
+        string url = "https://localhost:44313/Pivot/RemoveReport";
+        var data = new { ReportName = args.ReportName };
+        HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
+
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(url, content);
+        }
+    }
+    // To rename a report
+    public async Task RenameReport(RenameReportArgs args)
+    {
+        var url = "https://localhost:44313/Pivot/RenameReport";
+        var data = new { ReportName = args.ReportName, RenameReport = args.Rename, IsReportExists = args.IsReportExists };
+        var content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
+
+        using (HttpClient httpClient = new HttpClient())
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(url, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseJson = await response.Content.ReadAsStringAsync();
+            }
+        }
+    }
+}

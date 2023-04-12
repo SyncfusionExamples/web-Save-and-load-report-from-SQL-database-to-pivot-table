@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace PivotController.Controllers
+namespace MyWebService.Controllers
 {
     public class PivotController : ControllerBase
     {
@@ -60,12 +59,6 @@ namespace PivotController.Controllers
             public bool isReportExists { get; set; }
         }
 
-        public class ErrorViewModel
-        {
-            public string RequestId { get; set; }
-            public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-        }
-
         public void SaveReportToDB(string reportName, string report)
         {
             SqlConnection sqlConn = OpenConnection();
@@ -111,7 +104,15 @@ namespace PivotController.Controllers
             SqlCommand cmd1 = null;
             if (isReportExists)
             {
-                RemoveReportFromDB(renameReport);
+                foreach (DataRow row in GetDataTable(sqlConn).Rows)
+                {
+                    if ((row["ReportName"] as string).Equals(renameReport))
+                    {
+                        cmd1 = new SqlCommand("DELETE FROM ReportTable WHERE ReportName LIKE '%" + renameReport + "%'", sqlConn);
+                        break;
+                    }
+                }
+                cmd1.ExecuteNonQuery();
             }
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
