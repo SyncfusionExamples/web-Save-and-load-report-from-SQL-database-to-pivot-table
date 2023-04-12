@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace PivotController.Controllers
+namespace MyWebService.Controllers
 {
     public class PivotController : ControllerBase
     {
         [HttpPost]
         [Route("Pivot/SaveReport")]
-        public void SaveReport([FromBody] SaveReportDB reportDB)
+        public void SaveReport([FromBody] Dictionary<string, string> reportArgs)
         {
-            SaveReportToDB(reportDB.ReportName, reportDB.Report);
+            SaveReportToDB(reportArgs["reportName"], reportArgs["report"]);
         }
 
         [HttpPost]
@@ -23,34 +22,23 @@ namespace PivotController.Controllers
 
         [HttpPost]
         [Route("Pivot/RemoveReport")]
-        public void RemoveReport([FromBody] ReportDB reportDB)
+        public void RemoveReport([FromBody] Dictionary<string, string> reportArgs)
         {
-            RemoveReportFromDB(reportDB.ReportName);
+            RemoveReportFromDB(reportArgs["reportName"]);
         }
 
         [HttpPost]
         [Route("Pivot/RenameReport")]
-        public void RenameReport([FromBody] RenameReportDB reportDB)
+        public void RenameReport([FromBody] RenameReportDB reportArgs)
         {
-            RenameReportInDB(reportDB.ReportName, reportDB.RenameReport, reportDB.isReportExists);
+            RenameReportInDB(reportArgs.ReportName, reportArgs.RenameReport, reportArgs.isReportExists);
         }
 
         [HttpPost]
         [Route("Pivot/LoadReport")]
-        public IActionResult LoadReport([FromBody] ReportDB reportDB)
+        public IActionResult LoadReport([FromBody] Dictionary<string, string> reportArgs)
         {
-            return Ok((LoadReportFromDB(reportDB.ReportName)));
-        }
-
-        public class SaveReportDB
-        {
-            public string ReportName { get; set; }
-            public string Report { get; set; }
-        }
-
-        public class ReportDB
-        {
-            public string ReportName { get; set; }
+            return Ok((LoadReportFromDB(reportArgs["reportName"])));
         }
 
         public class RenameReportDB
@@ -60,13 +48,7 @@ namespace PivotController.Controllers
             public bool isReportExists { get; set; }
         }
 
-        public class ErrorViewModel
-        {
-            public string RequestId { get; set; }
-            public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-        }
-
-        public void SaveReportToDB(string reportName, string report)
+        private void SaveReportToDB(string reportName, string report)
         {
             SqlConnection sqlConn = OpenConnection();
             bool isDuplicate = true;
@@ -76,12 +58,12 @@ namespace PivotController.Controllers
                 if ((row["ReportName"] as string).Equals(reportName))
                 {
                     isDuplicate = false;
-                    cmd1 = new SqlCommand("UPDATE ReportTable set Report=@Report where ReportName like @ReportName", sqlConn);
+                    cmd1 = new SqlCommand("update ReportTable set Report=@Report where ReportName like @ReportName", sqlConn);
                 }
             }
             if (isDuplicate)
             {
-                cmd1 = new SqlCommand("INSERT into ReportTable (ReportName,Report) Values(@ReportName,@Report)", sqlConn);
+                cmd1 = new SqlCommand("insert into ReportTable (ReportName,Report) Values(@ReportName,@Report)", sqlConn);
             }
             cmd1.Parameters.AddWithValue("@ReportName", reportName);
             cmd1.Parameters.AddWithValue("@Report", report.ToString());
@@ -89,7 +71,7 @@ namespace PivotController.Controllers
             sqlConn.Close();
         }
 
-        public void RemoveReportFromDB(string reportName)
+        private void RemoveReportFromDB(string reportName)
         {
             SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
@@ -97,7 +79,7 @@ namespace PivotController.Controllers
             {
                 if ((row["ReportName"] as string).Equals(reportName))
                 {
-                    cmd1 = new SqlCommand("DELETE FROM ReportTable WHERE ReportName LIKE '%" + reportName + "%'", sqlConn);
+                    cmd1 = new SqlCommand("delete from ReportTable where ReportName like '%" + reportName + "%'", sqlConn);
                     break;
                 }
             }
@@ -105,19 +87,27 @@ namespace PivotController.Controllers
             sqlConn.Close();
         }
 
-        public void RenameReportInDB(string reportName, string renameReport, bool isReportExists)
+        private void RenameReportInDB(string reportName, string renameReport, bool isReportExists)
         {
             SqlConnection sqlConn = OpenConnection();
             SqlCommand cmd1 = null;
             if (isReportExists)
             {
-                RemoveReportFromDB(renameReport);
+                foreach (DataRow row in GetDataTable(sqlConn).Rows)
+                {
+                    if ((row["ReportName"] as string).Equals(reportName))
+                    {
+                        cmd1 = new SqlCommand("delete from ReportTable where ReportName like '%" + reportName + "%'", sqlConn);
+                        break;
+                    }
+                }
+                cmd1.ExecuteNonQuery();
             }
             foreach (DataRow row in GetDataTable(sqlConn).Rows)
             {
                 if ((row["ReportName"] as string).Equals(reportName))
                 {
-                    cmd1 = new SqlCommand("UPDATE ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);
+                    cmd1 = new SqlCommand("update ReportTable set ReportName=@RenameReport where ReportName like '%" + reportName + "%'", sqlConn);
                     break;
                 }
             }
@@ -126,7 +116,7 @@ namespace PivotController.Controllers
             sqlConn.Close();
         }
 
-        public List<string> FetchReportListFromDB()
+        private List<string> FetchReportListFromDB()
         {
             SqlConnection sqlConn = OpenConnection();
             List<string> reportNames = new List<string>();
@@ -141,7 +131,7 @@ namespace PivotController.Controllers
             return reportNames;
         }
 
-        public string LoadReportFromDB(string reportName)
+        private string LoadReportFromDB(string reportName)
         {
             SqlConnection sqlConn = OpenConnection();
             string report = string.Empty;
@@ -168,7 +158,7 @@ namespace PivotController.Controllers
 
         private DataTable GetDataTable(SqlConnection sqlConn)
         {
-            string xquery = "SELECT * FROM ReportTable";
+            string xquery = "select * from ReportTable";
             SqlCommand cmd = new SqlCommand(xquery, sqlConn);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             DataTable dt = new DataTable();
