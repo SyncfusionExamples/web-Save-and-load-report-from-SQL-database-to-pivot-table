@@ -12,9 +12,7 @@ Before beginning work on the server and client projects, ensure the following so
 
 ## How to run this application?
 
-To run this application, clone the [Save-and-load-report-from-SQL-database-to-pivot-table](https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table) repository.
-
-### Using the Web API service to connect MySql to a Pivot Table
+* To run this application, clone the [Save-and-load-report-from-SQL-database-to-pivot-table](https://github.com/SyncfusionExamples/Save-and-load-report-from-SQL-database-to-pivot-table) repository.
 
 * To connect a SQL server database to a Pivot Table using the Web API Controller (aka, MyWebService), open the **MyWebService** project in Visual Studio 2022. Simply build and run your project in IIS Express, and it will host and display the URL `https://localhost:44313`.
 
