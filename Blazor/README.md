@@ -18,4 +18,4 @@ To run this application, clone the [Save-and-load-report-from-SQL-database-to-pi
 
 * To connect a SQL server database to a Pivot Table using the Web API Controller (aka, MyWebService), open the **MyWebService** project in Visual Studio 2022. Simply build and run your project in IIS Express, and it will host and display the URL `https://localhost:44313`.
 
-* Now open the **MyBlazorServerApp** project in Visual Studio 2022. Initialize the Pivot Table, map the hosted URL, create a pivot report based on the given data source, and finally, run your project to perform save and load reports with the SQL database.
+* Now open the **MyBlazorServerApp** project in Visual Studio 2022. Initialize the Pivot Table, create a pivot report based on the given data source,  map the hosted URL to perform save and load reports with the SQL database, and finally run your project.
