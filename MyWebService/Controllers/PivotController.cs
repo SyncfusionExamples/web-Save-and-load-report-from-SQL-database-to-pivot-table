@@ -31,7 +31,7 @@ namespace MyWebService.Controllers
         [Route("Pivot/RenameReport")]
         public void RenameReport([FromBody] RenameReportDB reportArgs)
         {
-            RenameReportInDB(reportArgs.ReportName, reportArgs.RenameReport, reportArgs.isReportExists);
+            RenameReportInDB(reportArgs.ReportName, reportArgs.RenameReport, reportArgs.IsReportExists);
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace MyWebService.Controllers
         {
             public string ReportName { get; set; }
             public string RenameReport { get; set; }
-            public bool isReportExists { get; set; }
+            public bool IsReportExists { get; set; }
         }
 
         private void SaveReportToDB(string reportName, string report)
