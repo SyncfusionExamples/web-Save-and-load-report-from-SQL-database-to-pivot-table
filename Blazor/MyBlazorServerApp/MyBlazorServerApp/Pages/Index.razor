@@ -55,7 +55,7 @@
     public async Task SaveReport(SaveReportArgs args)
     {
         string url = "https://localhost:44313/Pivot/SaveReport";
-        var data = new { ReportName = args.ReportName, Report = args.Report };
+        var data = new { reportName = args.ReportName, report = args.Report };
         HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
 
         using (HttpClient httpClient = new HttpClient())
@@ -67,7 +67,7 @@
     public async Task FetchReport(FetchReportArgs args)
     {
         string url = "https://localhost:44313/Pivot/FetchReport";
-        var data = new { ReportName = args.ReportName };
+        var data = new { reportName = args.ReportName };
         HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
         List<string> reportNames = new List<string>();
         using (HttpClient httpClient = new HttpClient())
@@ -86,7 +86,7 @@
     public async Task LoadReport(LoadReportArgs args)
     {
         string url = "https://localhost:44313/Pivot/LoadReport";
-        var data = new { ReportName = args.ReportName };
+        var data = new { reportName = args.ReportName };
         HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
         string responseText = string.Empty;
         using (HttpClient httpClient = new HttpClient())
@@ -105,7 +105,7 @@
     public async Task RemoveReport(RemoveReportArgs args)
     {
         string url = "https://localhost:44313/Pivot/RemoveReport";
-        var data = new { ReportName = args.ReportName };
+        var data = new { reportName = args.ReportName };
         HttpContent content = new StringContent(JsonSerializer.Serialize(data), System.Text.Encoding.UTF8, "application/json");
 
         using (HttpClient httpClient = new HttpClient())
