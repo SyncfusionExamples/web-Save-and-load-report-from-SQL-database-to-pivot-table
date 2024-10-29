@@ -25,5 +25,5 @@ npm install
 * Initialize the Pivot Table, create a pivot report based on the given data source, map the hosted url to perform save and load reports with the SQL database, and finally run your project with the following command.
 
 ```sh
-npm run dev
+npm run serve
 ```
